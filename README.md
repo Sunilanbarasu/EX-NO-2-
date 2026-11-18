@@ -36,8 +36,152 @@ STEP-5: Display the obtained cipher text.
 
 Program:
 
+```
 
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int main()
+{
+    char key[100], text[100], matrix[5][5];
+    char used[26] = {0};
+    int i, j, k = 0, flag;
+    
+    printf("Enter the keyword: ");
+    scanf("%s", key);
+
+    printf("Enter the plaintext: ");
+    scanf("%s", text);
+
+    // Convert key to uppercase and remove duplicates
+    for(i = 0; key[i] != '\0'; i++)
+    {
+        char ch = toupper(key[i]);
+
+        if(ch == 'J')
+            ch = 'I';
+
+        if(ch >= 'A' && ch <= 'Z' && !used[ch-'A'])
+        {
+            matrix[k/5][k%5] = ch;
+            used[ch-'A'] = 1;
+            k++;
+        }
+    }
+
+    // Fill remaining letters
+    for(i = 0; i < 26; i++)
+    {
+        if(i == ('J'-'A'))
+            continue;
+
+        if(!used[i])
+        {
+            matrix[k/5][k%5] = 'A' + i;
+            k++;
+        }
+    }
+
+    // Display key matrix
+    printf("\nKey Matrix:\n");
+    for(i = 0; i < 5; i++)
+    {
+        for(j = 0; j < 5; j++)
+            printf("%c ", matrix[i][j]);
+
+        printf("\n");
+    }
+
+    // Prepare plaintext
+    char prepared[200];
+    int n = 0;
+
+    for(i = 0; text[i] != '\0'; i++)
+    {
+        char ch = toupper(text[i]);
+
+        if(ch < 'A' || ch > 'Z')
+            continue;
+
+        if(ch == 'J')
+            ch = 'I';
+
+        prepared[n++] = ch;
+    }
+
+    prepared[n] = '\0';
+
+    // Encrypt plaintext in pairs
+    printf("\nCipher Text: ");
+
+    for(i = 0; i < n; )
+    {
+        char a = prepared[i];
+        char b;
+
+        if(i + 1 >= n || prepared[i] == prepared[i+1])
+            b = 'X';
+        else
+        {
+            b = prepared[i+1];
+            i++;
+        }
+
+        int r1, c1, r2, c2;
+
+        for(j = 0; j < 5; j++)
+        {
+            for(k = 0; k < 5; k++)
+            {
+                if(matrix[j][k] == a)
+                {
+                    r1 = j;
+                    c1 = k;
+                }
+
+                if(matrix[j][k] == b)
+                {
+                    r2 = j;
+                    c2 = k;
+                }
+            }
+        }
+
+        if(r1 == r2)
+        {
+            printf("%c%c",
+                matrix[r1][(c1+1)%5],
+                matrix[r2][(c2+1)%5]);
+        }
+        else if(c1 == c2)
+        {
+            printf("%c%c",
+                matrix[(r1+1)%5][c1],
+                matrix[(r2+1)%5][c2]);
+        }
+        else
+        {
+            printf("%c%c",
+                matrix[r1][c2],
+                matrix[r2][c1]);
+        }
+
+        i++;
+    }
+
+    printf("\n");
+
+    return 0;
+}
+
+```
 
 
 
 Output:
+
+<img width="780" height="425" alt="image" src="https://github.com/user-attachments/assets/253efb92-c787-428e-974e-6f3484737306" />
+
+RESULT:
+Thus, the C program to implement the Playfair Cipher encryption technique was successfully executed, and the encrypted ciphertext BOIKQD was obtained.
